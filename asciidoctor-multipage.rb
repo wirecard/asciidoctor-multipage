@@ -367,7 +367,7 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
       new_section.title = node.title
       new_section.mplevel = node.mplevel
       new_parent << new_section
-      new_parent.sections.last.number = node.number
+      new_parent.sections.last.numeral = node.numeral
       new_parent = new_section
       node.sections.each do |section|
         new_outline_doc(section, new_parent: new_parent,
