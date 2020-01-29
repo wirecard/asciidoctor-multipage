@@ -57,7 +57,7 @@ class Asciidoctor::Document
   # order to generate a custom TOC for each page with entries that span the
   # entire document.
   def sections?
-    return true
+    return !sections.empty?
   end
 
   # Return the saved section number for this Document object (which was
