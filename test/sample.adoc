@@ -1,9 +1,10 @@
-= MultipageHtml5Converter Sample
+= MultipageHtml5Converter Sample {version}
 Author Name
 :toc: left
 :sectnums:
 // The default multipage-level value is 1 (split into chapters)
-:multipage-level: 1
+:multipage-level: 0
+:leveloffset: 1
 
 This sample document attempts to showcase the features of the
 MultipageHtml5Converter extension.
