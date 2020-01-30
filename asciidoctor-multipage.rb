@@ -2,6 +2,20 @@
 
 require 'asciidoctor/converter/html5'
 
+class String
+  def bold;           "\e[1m#{self}\e[22m" end
+end
+
+def myprint(node, indent = 1)
+  return unless node.sections?
+
+  node.sections.each do |sect|
+    puts "#{' ' * 2 * indent}[#{sect.level}] #{sect}".bold
+    myprint(sect, indent + 1)
+    puts '' if indent == 1
+  end
+end
+
 class Asciidoctor::AbstractBlock
   # Allow navigation links HTML to be saved and retrieved
   attr_accessor :nav_links
@@ -116,16 +130,22 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
   end
 
   def convert(node, transform = nil, opts = {})
+    # puts "#{'[convert]'.bold} #{node.node_name} #{node}"
     transform ||= node.node_name
     opts.empty? ? (send transform, node) : (send transform, node, opts)
   end
 
   # Process Document (either the original full document or a processed page)
   def document(node)
+    puts "# multipage.document #{node.sections?} #{node.sections.length}"
+    puts "     #{node}".bold
+    myprint(node)
     if node.processed
+      puts '- multipage.document.processed'
       # This node can now be handled by Html5Converter.
       super
     else
+      puts '- multipage.document.not-processed'
       # This node is the original full document which has not yet been
       # processed; this is the entry point for the extension.
 
@@ -246,7 +266,7 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
     return unless node.sections?
 
     sectnumlevels = opts[:sectnumlevels] || (node.document.attr 'sectnumlevels', 3).to_i
-    return if node.sections.empty?
+    # return if node.sections.empty?
 
     toclevels = opts[:toclevels] || (node.document.attr 'toclevels', 2).to_i
     sections = node.sections
@@ -319,7 +339,9 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
 
       # But we also need to find the parent page of the target node.
       current = node.document.catalog[:refs][node.attributes['refid']]
+      puts 'LOOP IN IF'
       until current.respond_to?(:mplevel) && current.mplevel != :content
+        puts %(<a href="#{node.target}"#{attrs}>#{text}</a> IN IF) if !current
         return %(<a href="#{node.target}"#{attrs}>#{text}</a>) if !current
         current = current.parent
       end
@@ -328,12 +350,16 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
       # If the target is the top-level section of the parent page, there is no
       # need to include the anchor.
       if "##{parent_page.id}" == node.target
+        puts "IFFF TARGET ##{parent_page.id} == #{node.target}"
         target = "#{parent_page.id}.html"
       elsif parent_page.id == ''
+        puts "IFFF EMPTY ##{parent_page.id} == '': #{node.target}"
         target = node.target
       else
+        puts "IFFF ELSE #{parent_page.id}.html#{node.target}"
         target = "#{parent_page.id}.html#{node.target}"
       end
+      puts %(<a href="#{target}"#{attrs}>#{text}</a> PARENT NODE CHECK)
 
       %(<a href="#{target}"#{attrs}>#{text}</a>)
     else
@@ -398,6 +424,7 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
     classes << 'toc-current' if node.id == doc.attr('docname')
     root = %(<span class="#{classes.join(' ')}">#{root_link}</span>)
     # Create and return the HTML
+    puts %(<p>#{root}</p>#{generate_outline(custom_outline_doc, opts)})
     %(<p>#{root}</p>#{generate_outline(custom_outline_doc, opts)})
   end
 
@@ -429,6 +456,7 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
   # or processed as normal by Html5Converter.
   def section(node)
     doc = node.document
+    puts(node)
     if doc.processed
       # This node can now be handled by Html5Converter.
       super
