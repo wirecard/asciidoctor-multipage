@@ -57,7 +57,7 @@ class Asciidoctor::Document
   # order to generate a custom TOC for each page with entries that span the
   # entire document.
   def sections?
-    return !sections.empty?
+    return true # !sections.empty?
   end
 
   # Return the saved section number for this Document object (which was
@@ -244,7 +244,10 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
   def generate_outline(node, opts = {})
     # This is the same as Html5Converter outline()
     return unless node.sections?
+
     sectnumlevels = opts[:sectnumlevels] || (node.document.attr 'sectnumlevels', 3).to_i
+    return if node.sections.empty?
+
     toclevels = opts[:toclevels] || (node.document.attr 'toclevels', 2).to_i
     sections = node.sections
     result = [%(<ul class="sectlevel#{sections[0].level}">)]
@@ -326,6 +329,8 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
       # need to include the anchor.
       if "##{parent_page.id}" == node.target
         target = "#{parent_page.id}.html"
+      elsif parent_page.id == ''
+        target = node.target
       else
         target = "#{parent_page.id}.html#{node.target}"
       end
