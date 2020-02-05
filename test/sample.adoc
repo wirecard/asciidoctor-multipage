@@ -1,10 +1,7 @@
-= MultipageHtml5Converter Sample
-Author Name
-:doctype: book
 :toc: left
-:sectnums:
-// The default multipage-level value is 1 (split into chapters)
-:multipage-level: 0
+:multipage-level: 2
+
+= MultipageHtml5Converter Sample
 
 This sample document attempts to showcase the features of the
 MultipageHtml5Converter extension.
@@ -20,10 +17,10 @@ with id `\[[root-inline]]`. It is linked from <<xrefs2>>.
 
 [[about-sample]]
 [desc="Explains how this sample document is processed"]
-= About This Sample
+== About This Sample
 
 [[tree]]
-== Tree Nodes
+=== Tree Nodes
 
 The MultipageHtml5Converter splits the document into node types during
 processing, based on the value of the `multipage-level` attribute. If a node's
@@ -47,7 +44,7 @@ parent (leaf) node file.
 ... <<xrefs2>> – level-2 section → content node
 
 [[output]]
-== Output Files
+=== Output Files
 
 The MultipageHtml5Converter creates the following five output files from this
 `sample.adoc` document.
@@ -68,10 +65,9 @@ the main output file (<<sample,sample.html>> by default)
    <<custom-chapter-2,custom-chapter-2.html>>
 ... <<xrefs2>> – content node → included in parent node
 
-[multipage-level=1]
 [[custom-level]]
 [desc="Shows a custom multipage-level value and additional features"]
-= Custom Level Part
+== Custom Level Part
 
 This second part has `multipage-level=1` set, which causes level-1 nodes to be
 leaf nodes (split into chapters). Nodes above that level are branch (or root)
@@ -82,14 +78,14 @@ it uses the document-level attribute, which is `multipage-level=0` (split into
 parts).
 
 [[custom-chapter-1]]
-== One Chapter
+=== One Chapter
 
 This is a level-1 chapter, and attribute value `multipage-level=1` is set at
 parent node "<<custom-level>>", so this is generated as a leaf node. All
 descendant nodes are generated as content nodes.
 
 [[xrefs1]]
-=== Cross-References
+==== Cross-References
 
 This section is a level-2 node and attribute value `multipage-level=1` is set
 at ancestor node "<<custom-level>>". Therefore, this section is generated as a
@@ -100,12 +96,12 @@ content node (and is included in its parent node).
 * See <<sample>> (the document id/title and root node).
 
 [[custom-chapter-2]]
-== Another Chapter
+=== Another Chapter
 
 This chapter is a leaf node and contains one section.
 
 [[xrefs2]]
-=== More Cross-References
+==== More Cross-References
 
 This section is a level-2 node, and is generated as a content node.
 
