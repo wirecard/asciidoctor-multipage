@@ -48,7 +48,7 @@ end
 class Asciidoctor::AbstractNode
   # Is this node (self) of interest when generating a TOC for node?
   def related_to?(node)
-    return true if level == 0
+    return true if level.zero?
 
     node_tree = []
     current = node
@@ -71,7 +71,7 @@ class Asciidoctor::AbstractNode
       end
       return true if self_tree.include?(node)
     end
-    false
+    return false
   end
 end
 
@@ -97,12 +97,12 @@ class Asciidoctor::Document
   # order to generate a custom TOC for each page with entries that span the
   # entire document.
   def sections?
-    !sections.empty?
+    return !sections.empty?
   end
 
   # Return the saved section number for this Document object (which was
   # originally a Section)
-  def sectnum(_delimiter = nil, _append = nil)
+  def sectnum(delimiter = nil, append = nil)
     @sectnum
   end
 end
@@ -219,9 +219,7 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
           part = block
           part.convert
           text = %(<<#{part.id},#{part.captioned_title}>>)
-          if desc = block.attr('desc') 
-            #text << %( – #{desc})
-          end
+          # if desc = block.attr('desc') then text << %( – #{desc}) end
           parts_list << Asciidoctor::ListItem.new(parts_list, text)
         end
       end
@@ -277,7 +275,7 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
                                      opts = { source: links.join(' | '), subs: :default })
       page.nav_links = block.content
     end
-    nil
+    return
   end
 
   # Generate the actual HTML outline for the TOC. This method is analogous to
@@ -417,7 +415,7 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
                                  for_page: for_page)
       end
     end
-    new_document
+    return new_document
   end
 
   # Override Html5Converter outline() to return a custom TOC outline
@@ -532,10 +530,9 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
     doc = node.document
     node.mplevel = :root if node.class == Asciidoctor::Document
     node.sections.each do |section|
-      if !section.attr?('multipage-level') 
+      if !section.attr?('multipage-level')
         section.set_attr('multipage-level', node.attr('multipage-level'))
       end
-      # end
       # Propogate custom multipage-level value to child node
       if !section.attr?('multipage-level', nil, false) &&
          node.attr('multipage-level') != doc.attr('multipage-level')
