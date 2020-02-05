@@ -152,9 +152,6 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
                                    :paragraph,
                                    opts = { source: page.nav_links })
     block.add_role('nav-footer')
-
-    # pp page.nav_links
-
     page << block
   end
 
@@ -222,8 +219,8 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
           part = block
           part.convert
           text = %(<<#{part.id},#{part.captioned_title}>>)
-          if desc = block.attr('desc')
-            # text << %( – #{desc})
+          if desc = block.attr('desc') 
+            #text << %( – #{desc})
           end
           parts_list << Asciidoctor::ListItem.new(parts_list, text)
         end
@@ -278,7 +275,6 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
       block = Asciidoctor::Block.new(parent = doc,
                                      context = :paragraph,
                                      opts = { source: links.join(' | '), subs: :default })
-
       page.nav_links = block.content
     end
     nil
@@ -416,8 +412,6 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
       new_parent.sections.last.numeral = node.numeral
       new_parent = new_section
 
-      pp "#{node.parent.id} level #{node.level}"
-
       node.sections.each do |section|
         new_outline_doc(section, new_parent: new_parent,
                                  for_page: for_page)
@@ -538,9 +532,10 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
     doc = node.document
     node.mplevel = :root if node.class == Asciidoctor::Document
     node.sections.each do |section|
-      unless section.attr?('multipage-level')
+      if !section.attr?('multipage-level') 
         section.set_attr('multipage-level', node.attr('multipage-level'))
       end
+      # end
       # Propogate custom multipage-level value to child node
       if !section.attr?('multipage-level', nil, false) &&
          node.attr('multipage-level') != doc.attr('multipage-level')
