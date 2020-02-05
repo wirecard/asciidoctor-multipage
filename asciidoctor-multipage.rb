@@ -222,8 +222,8 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
           part = block
           part.convert
           text = %(<<#{part.id},#{part.captioned_title}>>)
-          if desc = block.attr('desc') 
-            #text << %( – #{desc})
+          if desc = block.attr('desc')
+            # text << %( – #{desc})
           end
           parts_list << Asciidoctor::ListItem.new(parts_list, text)
         end
@@ -279,13 +279,6 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
                                      context = :paragraph,
                                      opts = { source: links.join(' | '), subs: :default })
 
-      # pp block.content
-      puts 'page_index:'
-      pp page_index
-      # puts "parent_page:"
-      puts 'links:'
-      pp links
-      # pp pages
       page.nav_links = block.content
     end
     nil
@@ -542,21 +535,12 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
 
   # Add multipage attribute to all sections in node, recursively.
   def set_multipage_attrs(node)
-    pp 'f you'
     doc = node.document
     node.mplevel = :root if node.class == Asciidoctor::Document
     node.sections.each do |section|
-      logger.warn node.attr('multipage-level')
-      # Check custom multipage-level attribute on section
-      # if section.attr?('multipage-level', nil, false) &&
-      #    section.attr('multipage-level').to_i < node.attr('multipage-level').to_i
-
-      #   logger.warn %(multipage-level value specified for "#{section.id}" ) +
-      #               %(section cannot be less than the parent section value)
-        if !section.attr?('multipage-level') 
-          section.set_attr('multipage-level', node.attr('multipage-level'))
-        end
-      # end
+      unless section.attr?('multipage-level')
+        section.set_attr('multipage-level', node.attr('multipage-level'))
+      end
       # Propogate custom multipage-level value to child node
       if !section.attr?('multipage-level', nil, false) &&
          node.attr('multipage-level') != doc.attr('multipage-level')
@@ -570,14 +554,6 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
       else
         section.mplevel = :content
       end
-      # pp "section.attr('multipage-level'):"
-      # pp section.attr('multipage-level')
-      # pp "set multipate attributes:"
-      # pp "section.mplevel"
-      # pp section.mplevel
-      # pp "section.level"
-      # pp section.level
-
       # Set multipage attribute on child sections now.
       set_multipage_attrs(section)
     end
