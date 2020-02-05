@@ -221,14 +221,14 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
         home_page = doc
         # NOTE, there are some non-breaking spaces (U+00A0) below.
         if previous_page != parent_page
-          links << %(← Previous: <<#{previous_page.id}>>)
+          links << %(←<<#{previous_page.id}>>)
         end
-        links << %(↑ Up: <<#{parent_page.id}>>)
-        links << %(⌂ Home: <<#{home_page.id}>>) if home_page != parent_page
+        links << %(↑<<#{parent_page.id}>>)
+        links << %(⌂<<#{home_page.id}>>) if home_page != parent_page
       end
       if page_index != pages.length-1
         next_page = pages[page_index+1]
-        links << %(Next: <<#{next_page.id}>> →)
+        links << %(<<#{next_page.id}>>→)
       end
       block = Asciidoctor::Block.new(parent = doc,
                                      context = :paragraph,
@@ -367,7 +367,9 @@ class MultipageHtml5Converter < Asciidoctor::Converter::Html5Converter
       new_section.title = node.title
       new_section.mplevel = node.mplevel
       new_parent << new_section
-      new_parent.sections.last.number = node.number
+      new_parent.sections.last.numeral = node.numeral
+      # deprecated:
+      # new_parent.sections.last.number = node.number
       new_parent = new_section
       node.sections.each do |section|
         new_outline_doc(section, new_parent: new_parent,
